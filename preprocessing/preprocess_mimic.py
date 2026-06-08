@@ -19,7 +19,7 @@ PPG morphology features (7, per-beat medians over window):
   pulse_amp, rise_time_ms, fall_time_ms, pulse_width_ms,
   auc, notch_depth, notch_time_norm
 
-Output: C:\\Users\\ONEMI\\Desktop\\Kobe\\mimic_preprocessed\\
+Output: mimic_preprocessed/
   {record_id}.npz per record:
       features      float32 (W, 13)
       sbp           float32 (W,)   relative SBP mmHg (delta from record median)

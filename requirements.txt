@@ -1,11 +1,15 @@
+# Phases 1-4 (MIMIC training + inference — scripts in this repo)
 numpy
 scipy
 pandas
 matplotlib
 scikit-learn
-torch
-antropy
-mlflow
+tensorflow
 wfdb
 requests
-python-pptx
+
+# Phase 5 (Aurora-BP training — path_a_radha/ scripts, not yet in repo)
+# torch
+# antropy
+# mlflow
+# python-pptx
