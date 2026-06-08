@@ -1,0 +1,39 @@
+# Data files (never commit participant or training data)
+*.npz
+*.npy
+*.keras
+*.h5
+*.csv
+*.json
+*.pdf
+
+# Keep these specific files
+!requirements.txt
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.env
+*.egg-info/
+dist/
+build/
+
+# Data directories
+mimic_downloads/
+mimic_preprocessed/
+lstm_model/
+inference_results/
+participant_features/
+data/
+output/
+test_download_output/
+mimic_search_output/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
