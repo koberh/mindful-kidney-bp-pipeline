@@ -3,6 +3,9 @@ scipy
 pandas
 matplotlib
 scikit-learn
-tensorflow
+torch
+antropy
+mlflow
 wfdb
 requests
+python-pptx
