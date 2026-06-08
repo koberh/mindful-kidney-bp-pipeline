@@ -18,10 +18,10 @@ Pages (informal daily snapshots, appended after Data Sources):
 Usage:
   python generate_full_report.py \
       --subject-id   SUBJ01 \
-      --inference-dir "D:/Mindful Kidney/Biometric Report/inference" \
-      --data-dir      "D:/Mindful Kidney/Biometric Report/data/OneDrive_actigraph" \
-      --cuff-csv      "D:/Mindful Kidney/Biometric Report/data/centrepoint_mktest01/cuff_readings.csv" \
-      --out-dir       "D:/Mindful Kidney/Biometric Report/output" \
+      --inference-dir inference/ \
+      --data-dir      data/actigraph/ \
+      --cuff-csv      data/cuff_readings.csv \
+      --out-dir       output/ \
       --name          "MK02" \
       --timezone      US/Eastern \
       --study-start   2026-04-28

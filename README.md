@@ -86,7 +86,7 @@ pip install -r requirements.txt
 
 ### Phase 5 training path (current deployment — Aurora-BP)
 
-> **Note:** The shared PyTorch architecture (`model.py`, `features.py`, `estimator.py`, etc.) is in this repo under `path_a_radha/`. The Aurora-BP-specific scripts (`aurora_bp_adapter.py`, `train_phase5.py`) are not yet included — the steps below document the full process for reproducibility.
+> **Note:** All Phase 5 scripts are in this repo under `path_a_radha/`. The steps below are fully reproducible given Aurora-BP data access (see Data section).
 
 **Step 1: Download Aurora-BP data from Zenodo**
 
@@ -217,11 +217,12 @@ path_a_radha/                       PyTorch pipeline (Phases 3-5)
     calibrate_participant.py        Per-participant cuff calibration
     evaluate.py                     Evaluation utilities (BPEstimator protocol, metrics)
 
-    [not yet in repo — Phase 5 Aurora-BP scripts]
     aurora_bp_adapter.py            Aurora-BP → 176-feature training NPZ
     train_phase5.py                 Phase 5 training on Aurora-BP ambulatory data
     evaluate_phase3_vs_phase5.py    2×2 head-to-head evaluation (produced the Phase table above)
     run_centrepoint_inference.py    CentrePoint API inference with Phase 5 checkpoint
+    calibrate_from_predictions.py   Hardened reliability gate (r / n / p / bootstrap CI)
+    finetune_participant.py         LOO per-participant ridge fine-tune prototype
 
 common/                             Shared utilities (no external deps beyond numpy/scipy/pandas)
     io/                             LEAP CSV file readers, CentrePoint data loaders

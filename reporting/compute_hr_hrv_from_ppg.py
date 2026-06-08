@@ -2,7 +2,7 @@
 """
 Compute HeartRate.csv and HeartRateVar.csv from raw 100 Hz green PPG day-files.
 
-Input:  D:\\Mindful Kidney\\CentrePoint Data Pull\\data\\<subject-id>\\ppg-green-100-hz\\*.csv
+Input:  data/<subject-id>/ppg-green-100-hz/*.csv
         (gzip-compressed, two interleaved channels, Unix-ms timestamps)
 Output: data\\OneDrive_actigraph\\HeartRate.csv
         data\\OneDrive_actigraph\\HeartRateVar.csv
