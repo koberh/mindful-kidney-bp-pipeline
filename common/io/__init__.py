@@ -3,7 +3,7 @@
 Reads ActiGraph LEAP v2 CSV exports and CentrePoint algorithm outputs.
 All timestamps are returned in UTC.
 
-Confirmed schema (device STM2E24242014, firmware 2.0.1, 2024-12-28 recording):
+Confirmed schema (ActiGraph LEAP v2, firmware 2.0.1):
   ppg25Hz.csv  — 25 Hz green PPG, two interleaved channels (0/1), local time
   RAW.csv      — 32 Hz tri-axial accelerometer, local time
   InterBeatInterval.csv — CentrePoint IBI (seconds), UTC

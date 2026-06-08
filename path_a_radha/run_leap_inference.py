@@ -4,8 +4,7 @@ Loads a LEAP recording (PPG + accel from CSV exports), windows it into
 5-min segments, runs the Phase 3 model via RadhaEstimator (with MC dropout
 for uncertainty), and emits BP trend predictions + a time-series plot.
 
-This is the first end-to-end test on real wrist-worn PPG (the test recording
-STM2E24242014 from 2024-12-29). It validates:
+Validates end-to-end on real wrist-worn PPG:
   - LEAP I/O reads correctly (CLAUDE.md gate 2)
   - Preprocessing handles 25 Hz wrist PPG (vs the 125 Hz MIMIC training rate)
   - Estimator produces sensible BP predictions

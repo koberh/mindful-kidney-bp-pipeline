@@ -7,7 +7,7 @@ Two phases:
   Phase 1 (fast)  — reads headers only, checks duration, no data downloaded
   Phase 2 (slow)  — downloads filtered records, saves as compressed .npz
 
-Output: C:\\Users\\ONEMI\\Desktop\\Kobe\\mimic_downloads\\
+Output: mimic_downloads/
   {patient}_{record}.npz   one file per record
   download_log.json         checkpoint (resumable)
   download_manifest.csv     summary of all downloaded records

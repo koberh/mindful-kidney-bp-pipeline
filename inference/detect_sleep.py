@@ -11,9 +11,9 @@ Output: {out_dir}/{subject_id}/sleep_windows.json
 
 Usage:
   python detect_sleep.py \
-      --temp-csv   "STM2E24242014 (2024-12-29)Temperature.csv" \
-      --subject-id TEST01 \
-      --out-dir    "D:\\mimic_downloads_both_computers_4_24\\Test Inference Output" \
+      --temp-csv   "SUBJ01_Temperature.csv" \
+      --subject-id SUBJ01 \
+      --out-dir    inference_results/ \
       --timezone   US/Pacific
 
 Requirements: numpy pandas scipy (already in bp_env — no new deps)
