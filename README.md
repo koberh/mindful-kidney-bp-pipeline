@@ -86,7 +86,7 @@ pip install -r requirements.txt
 
 ### Phase 5 training path (current deployment — Aurora-BP)
 
-> **Note:** The `path_a_radha/` scripts (Aurora-BP adapter, PyTorch training, head-to-head eval) are not yet included in this public repo. The steps below document the process; the MIMIC/TF training path below is fully runnable from this repo.
+> **Note:** The shared PyTorch architecture (`model.py`, `features.py`, `estimator.py`, etc.) is in this repo under `path_a_radha/`. The Aurora-BP-specific scripts (`aurora_bp_adapter.py`, `train_phase5.py`) are not yet included — the steps below document the full process for reproducibility.
 
 **Step 1: Download Aurora-BP data from Zenodo**
 
@@ -207,14 +207,26 @@ reporting/
     compute_hr_hrv_from_ppg.py      HR + RMSSD from raw 100 Hz PPG; 1-min HR / 5-min HRV windows
     generate_full_report.py         8-page PDF biometric report
 
-path_a_radha/                       [not yet in repo — Phase 5 PyTorch scripts]
+path_a_radha/                       PyTorch pipeline (Phases 3-5)
+    model.py                        RadhaLSTM architecture (bidirectional, 176-feature input)
+    features.py                     174-feature PPG extractor (HRV + Elgendi + Gaussian + Monte-Moreno)
+    estimator.py                    RadhaEstimator wrapper with MC dropout inference
+    train.py                        MIMIC training script (PyTorch)
+    mimic_adapter.py                MIMIC raw NPZ → 176-feature NPZ
+    run_leap_inference.py           LEAP PPG + accel CSV → relative BP trend (PyTorch)
+    calibrate_participant.py        Per-participant cuff calibration
+    evaluate.py                     Evaluation utilities (BPEstimator protocol, metrics)
+
+    [not yet in repo — Phase 5 Aurora-BP scripts]
     aurora_bp_adapter.py            Aurora-BP → 176-feature training NPZ
-    train_phase5.py                 Phase 5 training (PyTorch, bidirectional LSTM)
-    evaluate_phase3_vs_phase5.py    2×2 head-to-head evaluation
-    calibrate_from_predictions.py   Hardened reliability gate
-    finetune_participant.py         LOO per-participant fine-tune prototype
-    run_centrepoint_inference.py    CentrePoint inference with Phase 5 checkpoint
-    model.py                        Shared RadhaLSTM architecture
+    train_phase5.py                 Phase 5 training on Aurora-BP ambulatory data
+    evaluate_phase3_vs_phase5.py    2×2 head-to-head evaluation (produced the Phase table above)
+    run_centrepoint_inference.py    CentrePoint API inference with Phase 5 checkpoint
+
+common/                             Shared utilities (no external deps beyond numpy/scipy/pandas)
+    io/                             LEAP CSV file readers, CentrePoint data loaders
+    preprocessing/                  Bandpass filter, SQI, windowing, normalization
+    eval/                           BPEstimator protocol, BPMetrics, per-person Pearson r
 ```
 
 ---

@@ -119,26 +119,27 @@ def make_temp_csv(path: Path):
 
 def check_imports():
     needed = {
-        "numpy":      "numpy",
-        "scipy":      "scipy",
-        "pandas":     "pandas",
-        "sklearn":    "scikit-learn",
-        "wfdb":       "wfdb",
-        "requests":   "requests",
-        "tensorflow": "tensorflow  (needed by train_lstm.py / run_inference.py)",
-        "torch":      "torch       (needed by path_a_radha/ Phase 5 scripts)",
-        "antropy":    "antropy     (needed by path_a_radha/ Phase 5 scripts)",
+        "numpy":      ("numpy",     True),
+        "scipy":      ("scipy",     True),
+        "pandas":     ("pandas",    True),
+        "sklearn":    ("scikit-learn", True),
+        "wfdb":       ("wfdb",      True),
+        "requests":   ("requests",  True),
+        "torch":      ("torch        (path_a_radha/ PyTorch pipeline)", True),
+        "antropy":    ("antropy     (path_a_radha/ feature extraction)", True),
+        "tensorflow": ("tensorflow  (legacy TF scripts - optional)", False),
     }
-    ok_all = True
-    for mod, label in needed.items():
+    has_tf = False
+    for mod, (label, required) in needed.items():
         try:
             __import__(mod)
             print(f"  [OK]      {label}")
-        except ImportError:
-            print(f"  [MISSING] {label}")
             if mod == "tensorflow":
-                ok_all = False     # blocks in-repo training+inference
-    return ok_all
+                has_tf = True
+        except ImportError:
+            status = "[MISSING]" if required else "[OPTIONAL]"
+            print(f"  {status} {label}")
+    return has_tf
 
 
 # ── Main ─────────────────────────────────────────────────────────────────────
@@ -194,17 +195,40 @@ def main():
             print(f"         -> features shape: {d['features'].shape}  "
                   f"(expect (N, 13))")
 
-    # 2 ── train_lstm.py  (TensorFlow) ───────────────────────────────────────
-    print("\n[2] train_lstm.py  (TensorFlow - expects tensorflow installed)")
-    ok = _run(["training/train_lstm.py",
-               "--data-dir", str(mimic_out),
-               "--out-dir",  str(model_dir),
-               "--epochs",   "1"],
-              "train_lstm.py  (1 epoch)")
-    results["train_lstm"] = ok
-    if ok:
-        keras_path = model_dir / "best_model.keras"
-        print(f"         -> best_model.keras: {'exists' if keras_path.exists() else 'MISSING'}")
+    # 2 ── path_a_radha PyTorch sanity (model import + forward pass) ─────────
+    print("\n[2] path_a_radha - PyTorch model sanity check")
+    try:
+        import torch
+        import sys as _sys
+        _sys.path.insert(0, str(REPO))
+        from path_a_radha.model import RadhaLSTM
+        mdl = RadhaLSTM(n_features=176, lstm_cells=16, dense_hidden=8, bidirectional=True)
+        mdl.eval()
+        x = torch.zeros(1, 3, 176)
+        with torch.no_grad():
+            out = mdl(x)
+        assert out.shape == (1, 3, 3), f"unexpected output shape: {out.shape}"
+        print("  [PASS]  path_a_radha.model  (RadhaLSTM 176->16->3, forward pass OK)")
+        results["path_a_radha_model"] = True
+    except Exception as e:
+        print(f"  [FAIL]  path_a_radha.model  ({e})")
+        results["path_a_radha_model"] = False
+
+    # 2b ── train_lstm.py  (TensorFlow - legacy) ─────────────────────────────
+    print("\n[2b] train_lstm.py  (TensorFlow - optional legacy script)")
+    if imports_ok:
+        ok = _run(["training/train_lstm.py",
+                   "--data-dir", str(mimic_out),
+                   "--out-dir",  str(model_dir),
+                   "--epochs",   "1"],
+                  "train_lstm.py  (1 epoch)")
+        results["train_lstm"] = ok
+        if ok:
+            keras_path = model_dir / "best_model.keras"
+            print(f"         -> best_model.keras: {'exists' if keras_path.exists() else 'MISSING'}")
+    else:
+        print("  [SKIP]  train_lstm.py  (tensorflow not installed)")
+        results["train_lstm"] = None
 
     # 3 ── preprocess_leap.py ─────────────────────────────────────────────────
     print("\n[3] preprocess_leap.py  (numpy/scipy/pandas - no TF needed)")
@@ -222,20 +246,24 @@ def main():
             print(f"         -> features shape: {d['features'].shape}  "
                   f"(expect (N, 13))")
 
-    # 4 ── run_inference.py  (TensorFlow) ────────────────────────────────────
-    print("\n[4] run_inference.py  (TensorFlow - expects tensorflow installed)")
-    ok = _run(["inference/run_inference.py",
-               "--features-npz", str(feat_dir / "SUBJ01.npz"),
-               "--model-dir",    str(model_dir),
-               "--out-dir",      str(inf_dir),
-               "--timezone",     "UTC"],
-              "run_inference.py")
-    results["run_inference"] = ok
-    if ok:
-        bp_csv = inf_dir / "SUBJ01" / "bp_trend.csv"
-        if bp_csv.exists():
-            n = len(pd.read_csv(bp_csv))
-            print(f"         -> {n} prediction rows in bp_trend.csv")
+    # 4 ── run_inference.py  (TensorFlow - legacy) ──────────────────────────
+    print("\n[4] run_inference.py  (TensorFlow - optional legacy script)")
+    if imports_ok:
+        ok = _run(["inference/run_inference.py",
+                   "--features-npz", str(feat_dir / "SUBJ01.npz"),
+                   "--model-dir",    str(model_dir),
+                   "--out-dir",      str(inf_dir),
+                   "--timezone",     "UTC"],
+                  "run_inference.py")
+        results["run_inference"] = ok
+        if ok:
+            bp_csv = inf_dir / "SUBJ01" / "bp_trend.csv"
+            if bp_csv.exists():
+                n = len(pd.read_csv(bp_csv))
+                print(f"         -> {n} prediction rows in bp_trend.csv")
+    else:
+        print("  [SKIP]  run_inference.py  (tensorflow not installed)")
+        results["run_inference"] = None
 
     # 5 ── calibrate_bp.py  (no TF - runs on inference output) ───────────────
     print("\n[5] calibrate_bp.py  (numpy/pandas/sklearn - no TF needed)")
@@ -283,19 +311,18 @@ def main():
     for name, ok in results.items():
         print(f"  {status_map[ok]}  {name}")
 
-    tf_scripts = {"train_lstm", "run_inference"}
-    tf_failed  = any(not results.get(s) for s in tf_scripts)
+    tf_skipped = results.get("train_lstm") is None or results.get("run_inference") is None
+    any_fail   = any(v is False for v in results.values())
 
     print()
-    if tf_failed and not imports_ok:
-        print("  NOTE: TF scripts failed because tensorflow is not installed.")
-        print("        This machine has PyTorch (Phase 5 environment).")
-        print("        To run the in-repo TF scripts:  pip install tensorflow")
-        print("        To run Phase 5 end-to-end:      add path_a_radha/ to the repo")
-    elif all(v for v in results.values() if v is not None):
-        print("  All tested scripts PASSED.")
-    else:
+    if any_fail:
         print("  Some scripts FAILED - see details above.")
+    elif tf_skipped:
+        print("  PyTorch path_a_radha scripts: OK.")
+        print("  TF legacy scripts skipped (tensorflow not installed).")
+        print("  To run TF scripts:  pip install tensorflow")
+    else:
+        print("  All tested scripts PASSED.")
 
     print("=" * 62)
 

@@ -1,15 +1,16 @@
-# Phases 1-4 (MIMIC training + inference — scripts in this repo)
+# Core (all pipeline steps)
 numpy
 scipy
 pandas
 matplotlib
 scikit-learn
-tensorflow
 wfdb
 requests
 
-# Phase 5 (Aurora-BP training — path_a_radha/ scripts, not yet in repo)
-# torch
-# antropy
-# mlflow
-# python-pptx
+# path_a_radha/ PyTorch pipeline (Phases 3-5 — in this repo)
+torch
+antropy
+mlflow
+
+# Phases 1-4 TF scripts (training/train_lstm.py, inference/run_inference.py)
+# tensorflow  — optional; only needed for the original TF training path
