@@ -20,7 +20,7 @@ MIMIC-III ICU data (Phase 1–4 training — in this repo)
     └─► preprocessing/preprocess_mimic.py   extract 13-feature windows + relative BP labels
     └─► training/train_lstm.py              train Radha et al. 2019 LSTM (TensorFlow)
 
-Aurora-BP ambulatory data (Phase 5 training — scripts not yet in repo, see below)
+Aurora-BP ambulatory data (Phase 5 training — current deployment)
     └─► path_a_radha/aurora_bp_adapter.py   download + convert 15s wrist PPG snippets → 176-feature NPZ
     └─► path_a_radha/train_phase5.py        train bidirectional LSTM on ambulatory data (PyTorch)
 
@@ -43,7 +43,7 @@ Biometric report
 - **13-feature PPG representation** — 6 HRV features (mean RR, SDNN, RMSSD, pNN50, mean HR, LF/HF) + 7 PPG morphology features (pulse amplitude, rise time, fall time, pulse width, AUC, dicrotic notch depth/time); extracted in 30-second windows with 50% overlap from raw PPG at 125 Hz (MIMIC) or 25/100 Hz (LEAP).
 - **LSTM architecture (TensorFlow/Keras)** — Radha et al. (2019) sequence-to-sequence model: `TimeDistributed Dense(8, ReLU) → LSTM(32) → TimeDistributed Dense(3)`, predicting relative SBP/DBP/MAP at every timestep; amplified MSE loss upweights deviant BP windows to improve nocturnal dip sensitivity.
 
-**Phase 5 implementation (PyTorch, path_a_radha/ — not yet in repo):**
+**Phase 5 implementation (PyTorch, path_a_radha/):**
 - **176-feature PPG representation** — 174 handcrafted Radha et al. features (5 HRV + 40 Elgendi + 60 Gaussian-fit + 69 Monte-Moreno) + 2 position features; 153 features survive zero-variance filtering on Aurora-BP's 15-second windows.
 - **Bidirectional LSTM (PyTorch)** — `Linear(176→8, ReLU) → Dropout(0.4) → BiLSTM(8→16) → Dropout(0.4) → Linear(32→3)`, ~9,600 parameters. Monte-Carlo dropout (30 forward passes) at inference time significantly improves per-participant r vs. deterministic inference (Gal & Ghahramani 2016).
 - **Hardened reliability gate** — participant classified `reliable` only if SBP r ≥ 0.40, n ≥ 5 cuff readings, p < 0.05, and bootstrap 95% CI lower > 0. Prevents false-positive classifications seen with r-only gating at small n.

@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: "If you use this software in research, please cite it as below."
+type: software
+title: "Mindful Kidney: Wrist PPG Blood Pressure Pipeline"
+version: 1.0.0
+date-released: 2026-11-02
+license: MIT
+authors:
+  - family-names: Hanson
+    given-names: Kobe
+    orcid: "https://orcid.org/0009-0007-9727-4006"
+repository-code: "https://github.com/koberh/mindful-kidney-bp-pipeline"
+keywords:
+  - blood pressure
+  - photoplethysmography
+  - PPG
+  - cuffless blood pressure
+  - LSTM
+  - wearables
+  - chronic kidney disease
