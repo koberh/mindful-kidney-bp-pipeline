@@ -1,5 +1,7 @@
 # Mindful Kidney: Wrist PPG Blood Pressure Pipeline
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23900893.svg)](https://doi.org/10.5281/zenodo.23900893)
+
 Research code from the **Mindful Kidney Study** — a Yale IRB-approved prospective pilot trial (Protocol #2000042104) evaluating the Calm Health mindfulness app in adults with chronic kidney disease (CKD; n=26). PI: Garrett Ash, PhD (Yale School of Medicine); Co-I: Menaka Sarav, MD (Yale Medicine Nephrology).
 
 ---

@@ -5,6 +5,7 @@ title: "Mindful Kidney: Wrist PPG Blood Pressure Pipeline"
 version: 1.0.0
 date-released: 2026-11-02
 license: MIT
+doi: 10.5281/zenodo.23900893
 authors:
   - family-names: Hanson
     given-names: Kobe
